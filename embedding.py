@@ -26,5 +26,3 @@ class Embedding(nn.Module):
         
         return x
     
-
-

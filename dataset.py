@@ -12,29 +12,20 @@ class TextDataset(Dataset):
         with open(file, "r") as f:
             text = f.read()
         
-        data = my_tokenizer.encode(text)
-        
-        self.inputs = []
-        self.targets = []
-
-        for i in range(0, len(data) - context_length):
-            input = data[i : i + context_length]
-            target = data[i + 1 : i + 1 + context_length]
-
-            self.inputs.append(input)
-            self.targets.append(target) 
+        self.data = torch.tensor(my_tokenizer.encode(text), dtype=torch.long)
+        self.context_length = context_length
 
     def __len__(self):
-        return len(self.inputs)
+        return len(self.data) - self.context_length
     
     def __getitem__(self, index):
-        return self.inputs[index], self.targets[index]
+        x = self.data[index : index + self.context_length]
+        y = self.data[index + 1 : index + self.context_length + 1]
+        return x, y
     
 
-dataset = TextDataset("science_mini.txt", my_tokenizer, context_length=16)
+dataset = TextDataset("data.txt", my_tokenizer, context_length=16)
 train_loader = DataLoader(dataset, batch_size=4, shuffle=True)
 
 inputs, targets = next(iter(train_loader))
 
-print("Girdi Paketi Boyutu:", inputs.shape)  
-print("Hedef Paketi Boyutu:", targets.shape)
