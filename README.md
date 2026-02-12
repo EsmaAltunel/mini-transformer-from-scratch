@@ -1,40 +1,19 @@
  # **🎸 Swiftie-GPT: From-Scratch Transformer**
 
-Bu proje, Taylor Swift'in lirik dünyasını modellemek için
-
-PyTorch kullanılarak sıfırdan inşa edilmiş bir Decoder-only Transformer
-
-mimarisidir. Hazır model (GPT, Llama vb.) kullanmak yerine;
-
-tokenizer'dan dikkat mekanizmasına kadar her bileşen manuel olarak
-
-kodlanmıştır.
+Bu proje, Taylor Swift'in lirik dünyasını modellemek için PyTorch kullanılarak sıfırdan inşa edilmiş bir Decoder-only Transformer mimarisidir. Hazır model (GPT, Llama vb.) kullanmak yerine; tokenizer'dan dikkat mekanizmasına kadar her bileşen manuel olarak kodlanmıştır.
 
 
 ## **🧠 Teknik Mimari**
 
 ### **1. Hybrid Tokenizer & Dataset**
 
-* **Greedy Tokenization:** Regex tabanlı
+* **Greedy Tokenization:** Regex tabanlı ([a-zA-Z']+|[0-9]+|[?!,.]|\s+) hibrit bir yapı kullanıldı. Bilinen kelimeleri tam, bilinmeyenleri karakter bazlı işleyerek esneklik sağlar.
 
-([a-zA-Z']+|[0-9]+|[?!,.]|\s+) hibrit bir yapı kullanıldı. Bilinen
-
-kelimeleri tam, bilinmeyenleri karakter bazlı işleyerek esneklik sağlar.
-
-
-* **Sliding Window:** Veri seti, her adımda bir token kaydırarak modeli bir
-
-sonraki karakteri tahmin etmeye zorlayan (x, y) çiftleri üretir.
+* **Sliding Window:** Veri seti, her adımda bir token kaydırarak modeli bir sonraki karakteri tahmin etmeye zorlayan (x, y) çiftleri üretir.
 
 ### **2. Sinusoidal Embedding**
 
-* **Positional Encoding:** Kelime sırasını anlamak için
-
-eğitilebilir embedding yerine sabit sinüs/kosinüs dalgaları
-
-kullanılmıştır. Bu, modelin uzun dizilerdeki zamansal ilişkiyi
-
-matematiksel bir hassasiyetle kavramasını sağlar.
+* **Positional Encoding:** Kelime sırasını anlamak için eğitilebilir embedding yerine sabit sinüs/kosinüs dalgaları kullanılmıştır. Bu, modelin uzun dizilerdeki zamansal ilişkiyi matematiksel bir hassasiyetle kavramasını sağlar.
 
 ### **3. Causal Multi-Head Attention**
 
@@ -46,21 +25,13 @@ matematiksel bir hassasiyetle kavramasını sağlar.
 
 ### **4. Gated Decoder & MLP**
 
-* **Gated Projection:** Klasik MLP yerine Llama 3 tarzı
-
-  "Gated Linear Unit" ve GeLU aktivasyonu kullanılmıştır. Bu "kapı"
-
-mekanizması modelin öğrenme kapasitesini artırır.
+* **Gated Projection:** Klasik MLP yerine Llama 3 tarzı "Gated Linear Unit" ve GeLU aktivasyonu kullanılmıştır. Bu "kapı" mekanizması modelin öğrenme kapasitesini artırır.
 
 * **Manual LayerNorm:** Stabil bir eğitim için normalizasyon katmanı sıfırdan matematiksel formülüyle kodlanmıştır.
 
 ### **5. Generation**
 
-* **Top-K & Temperature:** Üretim sırasında
-
-"yaratıcılık" ayarı yapılır. Top-K ile saçma ihtimaller elenirken,
-
-Temperature ile modelin risk alma seviyesi (yaratıcılığı) belirlenir.
+* **Top-K & Temperature:** Üretim sırasında "yaratıcılık" ayarı yapılır. Top-K ile saçma ihtimaller elenirken, Temperature ile modelin risk alma seviyesi (yaratıcılığı) belirlenir.
 
 ## **⚙️ Eğitim ve Hiper-Parametreler**
 
@@ -90,6 +61,4 @@ Modeli test etmek için Gradio tabanlı modern bir web arayüzü sunulmuştur:
 
 * **Temperature:** Modelin risk alma/yaratıcılık seviyesini ayarlar.
 
-* **Top-K:** En yüksek olasılıklı k kelime arasından seçim yaparak
-  
-tutarlılığı korur. 
+* **Top-K:** En yüksek olasılıklı k kelime arasından seçim yaparak tutarlılığı korur. 
