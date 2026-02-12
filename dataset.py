@@ -12,7 +12,7 @@ class TextDataset(Dataset):
         with open(file, "r") as f:
             text = f.read()
         
-        self.data = torch.tensor(my_tokenizer.encode(text), dtype=torch.long)
+        self.data = my_tokenizer.encode(text).detach().clone().long()
         self.context_length = context_length
 
     def __len__(self):

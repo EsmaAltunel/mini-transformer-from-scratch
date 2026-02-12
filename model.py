@@ -22,24 +22,24 @@ class Model(nn.Module):
 
         return x
     
-    def generate(self, idx, max_new_tokens):
+    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
         self.eval()
         for _ in range(max_new_tokens):
-            # Sadece modelin görebileceği kadar (context_length) veriyi kesip alıyoruz
+
             idx_cond = idx[:, -self.embedding.pos_encoding.size(1):]
-            
-            # İleri besleme (Forward)
+
             logits = self.forward(idx_cond)
-            
-            # Sadece en son zaman adımındaki tahmine odaklanıyoruz
-            logits = logits[:, -1, :] # (Batch, Vocab_Size)
-            
-            # Olasılıkları hesapla ve en yüksek olanı seç (Greedy Search)
+
+            logits = logits[:, -1, :] / temperature 
+
+            if top_k is not None:
+                v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
+                logits[logits < v[:, [-1]]] = -float('Inf')
+
             probs = torch.softmax(logits, dim=-1)
-            _, next_token = torch.max(probs, dim=-1, keepdim=True)
+
+            next_token = torch.multinomial(probs, num_samples=1)
             
-            # Yeni kelimeyi mevcut kelimelerin yanına ekle
             idx = torch.cat((idx, next_token), dim=1)
             
         return idx
-

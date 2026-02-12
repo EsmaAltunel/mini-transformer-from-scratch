@@ -1,1 +1,6 @@
 __pycache__/
+.gradio/
+flagged/
+temp_vocab.json
+.env
+llm_env/

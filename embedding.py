@@ -22,7 +22,8 @@ class Embedding(nn.Module):
     def forward(self, idx):
         B, T = idx.shape
         tok_emb = self.token_embedding_table(idx)
-        x = tok_emb + self.pos_encoding[:, :T, :]
+        pos_emb = self.pos_encoding[:, :T, :].expand(B, -1, -1)
+        x = tok_emb + pos_emb
         
         return x
     
